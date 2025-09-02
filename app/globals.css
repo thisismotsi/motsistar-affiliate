@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-bg text-fg font-body;
+}
+
+.neon {
+  text-shadow: 0 0 10px theme("colors.brand.neon"),
+    0 0 20px theme("colors.brand.neon");
+}
+
+.btn {
+  @apply inline-flex items-center justify-center rounded-2xl px-5 py-3 font-medium shadow-glow transition;
+}
+
+.card {
+  @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-glow;
+}
