@@ -1,98 +1,91 @@
 // app/layout.tsx
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import Navbar from "../components/Navbar";
 import Footer from "@/components/Footer";
+import { Inter } from "next/font/google";
+import Head from "next/head";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  weight: ["100","200","300","400","500","600","700"],
   display: "swap",
 });
 
-const siteName = "Motsistar";
-const baseUrl = "https://motsistar.com";
-const defaultDesc =
-  "Motsistar curates the best tools, gear, and learning resources — honest picks we’d use ourselves.";
-
-export const metadata: Metadata = {
-  metadataBase: new URL(baseUrl),
-  title: {
-    default: siteName,
-    template: `%s — ${siteName}`,
-  },
-  description: defaultDesc,
-  applicationName: siteName,
+// Default site-wide metadata
+export const metadata = {
+  title: "MOTSISTAR - Discover amazing products and services & Business Solutions",
+  description:
+    "MOTSISTAR delivers authentic product reviews, curated recommendations, and safe online shopping guidance for businesses and consumers.",
+  metadataBase: new URL(process.env.SITE_URL || "https://example.com"),
   openGraph: {
+    title: "MOTSISTAR - Discover amazing products and services & Business Solutions",
+    description:
+      "MOTSISTAR delivers authentic product reviews, curated recommendations, and safe online shopping guidance for businesses and consumers.",
+    url: process.env.SITE_URL || "https://example.com",
     type: "website",
-    siteName,
-    title: siteName,
-    description: defaultDesc,
-    url: baseUrl,
-    images: [
-      {
-        url: "/og-image-1200x630.png", // ✅ use the new OG image
-        width: 1200,
-        height: 630,
-        alt: siteName,
-      },
-    ],
+    images: [{ url: "/og-home.png", width: 1200, height: 630, alt: "MOTSISTAR" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: siteName,
-    description: defaultDesc,
-    images: ["/og-image-1200x630.png"], // ✅ same here
-  },
-  alternates: {
-    canonical: baseUrl,
+    title: "MOTSISTAR - Discover amazing products and services & Business Solutions",
+    description:
+      "MOTSISTAR delivers authentic product reviews, curated recommendations, and safe online shopping guidance for businesses and consumers.",
+    images: ["/og-home.png"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
   },
-  icons: {
-    icon: [
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
-    apple: "/apple-touch-icon.png",
-  },
-  manifest: "/site.webmanifest", // ✅ optional, if you add PWA
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
-      <head>
-        {/* Preconnect for speed */}
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
-        <link rel="preconnect" href="https://images.unsplash.com" />
-      </head>
-      <body className="bg-bg text-fg font-body antialiased">
-        {/* Accessibility: skip link */}
-        <a href="#main" className="sr-only focus:not-sr-only focus:p-3">
-          Skip to content
-        </a>
-        <Navbar />
-        <main id="main">{children}</main>
-        <Footer />
+      <Head>
+        {/* Favicons */}
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <meta name="theme-color" content="#ffffff" />
 
-        {/* ✅ Plausible Analytics */}
+        {/* Preconnect / Fonts */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+        {/* JSON-LD Structured Data */}
         <script
-          defer
-          data-domain="motsistar.com"
-          src="https://plausible.io/js/script.js"
-        ></script>
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "MOTSISTAR",
+              url: process.env.SITE_URL || "https://example.com",
+              logo: process.env.SITE_URL + "/logo.png",
+              sameAs: [
+                "https://www.facebook.com/yourpage",
+                "https://twitter.com/yourprofile",
+                "https://www.linkedin.com/company/yourcompany",
+              ],
+            }),
+          }}
+        />
+      </Head>
+
+      <body className="font-sans bg-ivory text-charcoal min-h-screen">
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

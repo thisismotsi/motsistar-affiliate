@@ -1,21 +1,17 @@
 // app/sitemap.ts
-import type { MetadataRoute } from "next";
-import { products } from "@/lib/products";
+import { allPosts } from "@/app/posts";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://motsistar.com";
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${base}/`, priority: 1.0 },
-    { url: `${base}/products`, priority: 0.8 },
-    { url: `${base}/promotions`, priority: 0.7 },
-    { url: `${base}/affiliate-disclosure`, priority: 0.5 },
-  ];
+export default function sitemap() {
+  const siteUrl = process.env.SITE_URL || "https://example.com";
 
-  const productRoutes: MetadataRoute.Sitemap = products.map((p) => ({
-    url: `${base}/products/${p.id}`,
-    priority: 0.8,
-    lastModified: new Date().toISOString(),
+  const posts = allPosts.map((post) => ({
+    url: `${siteUrl}/blog/${post.slug}`,
+    lastModified: post.date,
   }));
 
-  return [...staticRoutes, ...productRoutes];
+  return [
+    { url: siteUrl, lastModified: new Date().toISOString() },
+    { url: `${siteUrl}/blog`, lastModified: new Date().toISOString() },
+    ...posts,
+  ];
 }

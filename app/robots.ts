@@ -2,9 +2,13 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const base = "https://motsistar.com";
+  const siteUrl = process.env.SITE_URL || "https://example.com";
+
   return {
-    rules: [{ userAgent: "*", allow: "/" }],
-    sitemap: `${base}/sitemap.xml`,
+    rules: {
+      userAgent: "*",
+      allow: "/",
+    },
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

@@ -1,56 +1,99 @@
-import Image from "next/image";
-import Link from "next/link";
+"use client";
 
-type Props = {
-  id: string;
+import Image from "next/image";
+import { useState } from "react";
+import { Button } from "@/components/Button";
+import { motion } from "framer-motion";
+
+interface ProductCardProps {
+  number: number;
   name: string;
-  image: string;
-  price?: string;
-  rating?: number;
-  badge?: string;
-  url: string;
+  description: Record<string, string>[]; // multiple paragraphs
+  imageSrc?: string;
+  specs: { label: string; value: string }[];
+  affiliateLink: string;
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({
+  number,
+  name,
+  description,
+  imageSrc,
+  specs,
+  affiliateLink,
+}) => {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <motion.div
+      id={`product-${number}`}
+      className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 mb-12 hover:shadow-xl transition-shadow duration-300"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: number * 0.05 }}
+    >
+      {/* Title */}
+      <h2 className="text-2xl md:text-3xl font-bold text-navy mb-5">
+        {number}. {name}
+      </h2>
+
+      {/* Product Image */}
+      {imageSrc && !imageError && (
+        <motion.div
+          className="w-full flex justify-center mb-6 overflow-hidden rounded-2xl shadow-md"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Image
+            src={imageSrc}
+            alt={name}
+            width={700}
+            height={450}
+            className="rounded-2xl object-cover max-h-[420px] w-auto"
+            onError={() => setImageError(true)}
+          />
+        </motion.div>
+      )}
+
+      {/* Description */}
+      <div className="space-y-4 mb-6">
+        {description.map((para, idx) => (
+          <p
+            key={idx}
+            className="text-gray-700 leading-relaxed font-normal"
+          >
+            {Object.values(para)[0]}
+          </p>
+        ))}
+      </div>
+
+      {/* Specs */}
+      {specs.length > 0 && (
+        <ul className="list-disc list-inside space-y-1 mb-8 text-gray-600 text-sm md:text-base">
+          {specs.map((item, idx) => (
+            <li key={idx}>
+              <span className="font-medium text-gray-800">{item.label}:</span>{" "}
+              {item.value}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* CTA Button */}
+      <div className="flex justify-center">
+        <Button
+          href={affiliateLink}
+          variant="default"
+          size="lg"
+          className="rounded-xl px-6 py-3 shadow-md hover:shadow-lg w-full md:w-auto"
+        >
+          View Product on Amazon
+        </Button>
+      </div>
+    </motion.div>
+  );
 };
 
-export default function ProductCard({ id, name, image, price, rating, badge, url }: Props) {
-  return (
-    <div className="card p-4 flex flex-col items-center text-center">
-      {/* Image */}
-      <div className="relative w-full h-48 overflow-hidden rounded-xl">
-        <Image src={image} alt={name} fill className="object-cover" placeholder="blur"
-  blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIi8+"/>
-      </div>
-
-      {/* Info */}
-      <div className="mt-4 space-y-2">
-        <h3 className="text-lg font-semibold">{name}</h3>
-        {badge && (
-          <span className="text-xs px-2 py-1 rounded-full bg-brand-pink text-bg">
-            {badge}
-          </span>
-        )}
-        {price && <p className="text-brand-accent font-bold">{price}</p>}
-        {rating && (
-          <p className="text-sm text-fg/70">⭐ {rating.toFixed(1)}</p>
-        )}
-      </div>
-
-      {/* Buttons */}
-      <div className="flex gap-3 mt-4">
-        <Link
-          href={url}
-          target="_blank"
-          rel="nofollow sponsored noopener noreferrer"
-          className="px-4 py-2 text-sm border border-brand-pink text-brand-pink rounded-lg hover:bg-brand-pink hover:text-bg transition"
-        >
-          Get {name}
-        </Link>
-        <Link
-          href={`/products/${id}`}
-          className="px-4 py-2 text-sm border border-brand-neon text-brand-neon rounded-lg hover:bg-brand-neon hover:text-bg transition"
-        >
-          View more Details
-        </Link>
-      </div>
-    </div>
-  );
-}
+export default ProductCard;
